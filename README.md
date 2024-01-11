@@ -16,13 +16,11 @@ Everything in this repository is provided as is, without warranty. I provide no 
 
 In theory, this method of booting into an OS other than the default system on a Steam Link poses significantly less risk to your device than attempting to install a new OS on the built in storage, as you can simply remove the USB drive to return normal Steam Link functionality.
 
-Just because there's less risk to your hardware though, does not mean it is risk free. You should take great caution when running scripts and using software taken from an unknown source. You should also be careful about copying and pasting random commands from the internet to run on your computer. Any of these things has the potential to do great harm if someone were to provide malicious software and/or commands.
+Just because there's less risk to your hardware though, does not mean it is risk free. You should take great caution when running scripts and using software taken from an unknown source. You should also be careful about copying and pasting random commands from the internet to run on your computer.
 
 I have provided relatively detailed instructions so that this process can be followed along with ease and without a lot of experience, but I still strongly encourage you to read through the provided installation script and review and understand the commands I'm asking you to run.
 
 Additionally, the provided kernel was compiled by someone other than you. By using the kernel included in this repository, you are trusting a stranger on the internet that the kernel is safe to use. If you're willing to take my word for it, I did compile the kernel from source from kernel.org, without modification, and I validated the signature of the source tarball before doing so.
-
-That said, I do not provide any further guarantee that the provided kernel is safe to use. If this concerns you, compiling your own Linux kernel is not exceedingly difficult, althought it does require some effort and knowledge. You may wish to take security precautions when using this kernel and/or method of running Linux on a Steam Link, as the kernel will not necessarily be kept up to date. One option is to prevent the unit from connecting to the internet, except only when necessary for updates or to install new software.
 
 This README provides a lot of detail, but the instructions contained in it still require a basic understanding of Linux, command line interfaces, and other various technologies, such as SSH, Git, and networking.
 
