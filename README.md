@@ -437,7 +437,7 @@ make the kernel modules sudo make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnue
 
 install kernel modules to a known location make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- INSTALL_MOD_PATH=~/steamcc/arch_boot modules_install
 
-clone install script git repository cd ~/steamcc git clone -b linux-6.1.66-mrvl https://git.arcnet.pw/acrawford/SteamLink-ArchLinux.git
+clone install script git repository cd ~/steamcc git clone -b linux-6.1.66-mrvl https://github.com/craw0967/steamlink-archlinux.git
 
 navigate to repository directory cd ~/steamcc/SteamLink-ArchLinux
 
