@@ -3,7 +3,7 @@ This repository hosts a modified version of the script found in this GitHub repo
 
 From regmibijay's repo - Create Archlinux boot medium for steamlink with one script! (According to regmibijay, the kernel can supposedly be updated inside Archlinux once you flash it, however I have not determined an easy method of doing that without compiling a new kernel.)
 
-This repository will install a newer linux kernel (6.1.66) than the GitHub repository linked above (which install kernel 5.4.24). You can compile a newer Linux kernel yourself, if you prefer. You can find instructions below (instructions still need formatting). Additionally, if you do compile a newer Linux kernel, the script will need to be modified to accomodate the different files.
+This repository will install a newer linux kernel (6.1.66 Long Term) than the GitHub repository linked above (which installs kernel 5.4.24). I've also included a recent, at the time of writing this, Main Line kernel (6.6.8). You can also compile a newer Linux kernel yourself, if you prefer. I've included instructions below (instructions still need editing and formatting). Additionally, if you do use an alternative Linux Kernel, the script will need to be modified to accomodate the different files.
 
 You can also manually perform the steps that the script automates. The script is relatively straightforward, as far as scripts go, but you can also find a basic outline of steps on Reddit here - https://www.reddit.com/r/Steam_Link/comments/fgew5x/running_archlinux_on_steam_link_revisited/
 
