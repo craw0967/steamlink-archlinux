@@ -58,7 +58,7 @@ This script has only been tested on Linux. This may work with Windows Subsystems
 
 Open a terminal and clone this repository. Install Git if needed. (Installation commands for common package managers - `sudo apt install git`, `sudo pacman -S git`, `sudo yum install git`) Keep in mind, it will clone to whichever directory you currently have open.
 ```
-git clone https://git.arcnet.pw/acrawford/SteamLink-ArchLinux.git
+git clone https://github.com/craw0967/steamlink-archlinux.git
 ```
 
 Plug in the USB drive you wish to install Archlinux onto. If you are using a Virtual Machine, ensure the USB drive is correctly passed through to the VM.
