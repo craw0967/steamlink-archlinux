@@ -20,9 +20,9 @@ sudo tar -xvpf  arch_userspace.tar.gz -C /media/disk/
 echo [4/11] "Copying kexec_load.ko"
 sudo cp kexec_load.ko /media/disk/boot/
 echo [5/11] "Copying zImage"
-sudo cp zImage /media/disk/boot/
+sudo cp zImage_6_1_66 /media/disk/boot/zImage
 echo [6/11] "Copying initramfs"
-sudo cp initramfs-linux-steam.img /media/disk/boot/
+sudo cp initramfs-linux-steam_6_1_66.img /media/disk/boot/initramfs-linux-steam.img
 echo [7/11] "Copying berlin2cd-valve-steamlink.dtb"
 sudo cp berlin2cd-valve-steamlink.dtb /media/disk/boot/
 echo [8/11] "Copying  kexec and 755 on kexec"
