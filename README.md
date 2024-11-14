@@ -1,15 +1,20 @@
-# SteamLink-Archlinux #
+# SteamLink-ArchLinux #
 This repository hosts a modified version of the script found in this GitHub repository - https://github.com/regmibijay/steamlink-archlinux
 
-From regmibijay's repo - Create Archlinux boot medium for steamlink with one script! (According to regmibijay, the kernel can supposedly be updated inside Archlinux once you flash it, however I have not determined an easy method of doing that without compiling a new kernel.)
+From regmibijay's repository:
+>Create ArchLinux boot medium for steamlink with one script!
 
-The script in this repository will install a newer linux kernel (6.1.66 Long Term) than the GitHub repository linked above (which installs kernel 5.4.24). You can also compile a newer Linux kernel yourself, if you prefer. I've included instructions below (instructions still need editing and formatting). Additionally, if you do use an alternative Linux Kernel (such as the 6.6.8 version included in the repo), the script will need to be modified to accomodate the different files.
+According to regmibijay, the kernel can supposedly be updated inside ArchLinux once you flash it, however I have not determined an easy method of doing that without compiling a new kernel.
+
+The script in this repository will install a newer Linux kernel (6.6.54 Long Term) than the GitHub repository linked above (which installs kernel 5.4.24). If you prefer, you can also compile a different Linux kernel yourself. I've included instructions below.
 
 You can also manually perform the steps that the script automates. The script is relatively straightforward, as far as scripts go, but you can also find a basic outline of steps on Reddit here - https://www.reddit.com/r/Steam_Link/comments/fgew5x/running_archlinux_on_steam_link_revisited/
 
 You can also find more details on how to compile the kernel for the Steam Link and how to install the necessary files here - https://heap.ovh/getting-linux-on-valve-steam-link.html and here - https://web.archive.org/web/20190925025431/http://www.livxtrm.com/steamlink/. 
 
-The kernel used in this repository was compiled by myself. The author of the post at heap.ovh has two earlier kernel versions compiled if you prefer, including the kernel used in the repository this one is based off of.
+The kernel used in this repository was compiled by myself. The author of the post at heap.ovh has two earlier kernel versions compiled if you prefer, including the kernel used in the repository this one is based off of. These instructions do not support how to get the appropriate files from heap.ovh, or how to install them.
+
+ArchLinux was chosen primarily because that is what others had already paved the way with, but also because of the ease of procuring and installing the ArchLinux user space. Other Linux distros user spaces, or a custom user space, could be used in theory, however I found it difficult to find and install just the user space of say, Ubuntu for example. 
 
 ## Disclaimer ##
 Everything in this repository is provided as is, without warranty. I provide no support and am not responsible for damages caused by the use of this software or by following the instructions provided. I am also not responsible for what you do with this software.
@@ -61,7 +66,7 @@ Open a terminal and clone this repository. Install Git if needed. (Installation 
 git clone https://github.com/craw0967/steamlink-archlinux.git
 ```
 
-Plug in the USB drive you wish to install Archlinux onto. If you are using a Virtual Machine, ensure the USB drive is correctly passed through to the VM.
+Plug in the USB drive you wish to install ArchLinux onto. If you are using a Virtual Machine, ensure the USB drive is correctly passed through to the VM.
 
 Confirm the USB drive name and partition you wish to install the OS onto.
 
@@ -116,7 +121,7 @@ Execute and run the script:
 sudo ./boot_device_creator.sh
 ```
 
-Follow the prompts and enter in the drive you wish to format and install Archlinux to. Be very careful at this point as the script will format whatever drive you select.
+Follow the prompts and enter in the drive you wish to format and install ArchLinux to. Be very careful at this point as the script will format whatever drive you select.
 ```
 /dev/sdb1
 ```
@@ -178,7 +183,7 @@ Sync the package databases and upgrade the system.
 pacman -Syu
 ```
 
-You can find more information about the pacman keyring and updating the system via the Archlinux wiki - https://wiki.archlinux.org/title/Pacman/Package_signing
+You can find more information about the pacman keyring and updating the system via the ArchLinux wiki - https://wiki.archlinux.org/title/Pacman/Package_signing
 
 For example, if a system upgrade has been delayed for an extended period, you should manually sync the package database and upgrade the *archlinux-keyring* before performing a system upgrade.
 ```
@@ -244,7 +249,7 @@ Or, shutdown the Steam Link if you're not ready to perform additional tasks
 shutdown now
 ```
 
-At this point, your SSH session will terminate. Your are now finished with the intial setup of Archlinux and you can log in via SSH as the new sudo user you just created.
+At this point, your SSH session will terminate. Your are now finished with the intial setup of ArchLinux and you can log in via SSH as the new sudo user you just created.
 
 If you changed the system's hostname, you will need to update your SSH connection configuration if you're using the hostname instead of the IP address.
 
@@ -263,7 +268,7 @@ pacman -S wpa_supplicant
 ```
 
 #### MAC Address Spoofing (Optional) ####
-###### This is really only necessary if you have more than one Steam Link on the same network at the same time. Every steam link I've tested (only 2) seems to have the same MAC address for the wireless interface `mlan0`. To help prevent IP address conflicts, we can change/spoof the wireless interface's MAC address to something unique.  ######
+Note: This is really only necessary if you have more than one Steam Link on the same network at the same time. Every steam link I've tested (only 2) seems to have the same MAC address for the wireless interface `mlan0`. To help prevent IP address conflicts, we can change/spoof the wireless interface's MAC address to something unique.
 
 Lookup the current WiFi MAC address and note it. It will be listed as `link/ether`.
 ```
@@ -370,6 +375,176 @@ Once WiFi has connected, permanently enable the netctl profile. This might be re
 sudo netctl enable mlan0-SSIDName
 ```
 
+## Instructions to Cross Compile Linux Kernel ##
+The SteamLink hardware uses a 32-bit ARM CPU. For most of us, that means our primary computer's CPU is of a different architecture, e.g. x86. Since different CPU architectures use differing instruction sets, we can't just compile the Linux kernel using tools built for our CPU and expect it to work on the SteamLink. We need to cross compile the kernel to work with the 32-bit ARM CPU used in the SteamLink.
+
+If you already had a SteamLink set up to boot into a custom Linux install, you could us the SteamLink to compile the Linux kernel without having to cross compile. I would recommend against doing this however, as the CPU in the SteamLink is not very powerful and it takes a very long time to complete.
+
+My primary computer has a 64-bit x86 CPU, so the following instructions will be written for that architecture. At the time I wrote up these instructions, I believe I was running Ubuntu Desktop 23.10. I used Ubuntu because I was running it in a virtual machine, Ubuntu tends to be well optimized for that scenario, and it was relatively easy to find resources to help cross compile code. I have also followed these instructions successfully when running Pop!OS 22.04 LTS on bare metal. Pop!OS is based on Ubuntu.
+
+I would imagine that you should also be able to cross compile the kernel using other flavors of Linux, Windows, a Mac with an Intel or M-series CPU, or other CPU architectures or OSes, however that is beyond the scope of these instructions.
+
+#### Downloading the SteamLink SDK and the Linux Kernel ####
+Ensure your system is up to date.
+```
+sudo apt update
+sudo apt upgrade -y
+```
+Install Git
+```
+sudo apt install git
+```
+Create a directory to store the SteamLink SDK and Linux kernel files and navigate to the new directory.
+```
+mkdir ~/steamcc && cd ~/steamcc
+```
+Clone the SteamLink SDK Git repository.
+```
+git clone https://github.com/ValveSoftware/steamlink-sdk.git
+```
+Navigate to https://kernel.org/ and determine which Linux kernel you want to compile. If you need help, https://itsfoss.com/compile-linux-kernel/ has a good description of what the different "versions" mean.
+
+Download the kernel and PGP signature file. The example below is downloading the 6.6.8 version of the kernel, but you can replace the URLs in the `wget` commands with the URLs of the corresponding files for the version you chose.
+
+An easy way to get those URLs is to right click the `tarball` and `pgp` links on https://kernel.org/ and then select `Copy Link` to copy the URLs to your clipboard.
+```
+mkdir ~/steamcc/kernel-dl && cd ~/steamcc/kernel-dl
+wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.8.tar.xz 
+wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.8.tar.sign
+```
+
+#### Verify the tarball file is not corrupted. ####
+Note: More detailed instructions and information about this process can be found here - https://itsfoss.com/compile-linux-kernel/
+
+Decompress the tarball. You should still be in the `~/steamcc/kernel-dl/` directory.
+```
+unxz --keep linux-*.tar.xz
+```
+Install gnupg2 if you don't already have it installed.
+```
+sudo apt install gnupg2
+```
+Fetch public GPG keys used to sign the tarball
+```
+gpg2 --locate-keys torvalds@kernel.org gregkh@kernel.org
+```
+Verify the integrity of the tarball
+```
+gpg2 --verify linux-*.tar.sign
+```
+You should receive a message that says something along these lines - `gpg: Good signature from "Greg Kroah-Hartman <gregkh@kernel.org>"` If you do, then you can proceed with extracting the tarball. Do not proceed if the tarball does not validate. Re-download the files and try again.
+
+Extract the tarball
+```
+tar -xf linux-*.tar
+```
+Clean up the downloaded files, leaving the extracted files in place. 
+```
+rm linux-*.tar*
+```
+Move the extracted kernel files to the `steamlink-sdk` folder 
+```
+mv ~/steamcc/kernel-dl/linux-* ~/steamcc/steamlink-sdk/
+```
+Navigate to the `~/steamcc/steamlink-sdk/` directory and clean up the `~/steamcc/kernel-dl` directory. 
+```
+cd ~/steamcc/steamlink-sdk/ && rm -r ~/steamcc/kernel-dl
+```
+#### Install Dependencies ####
+We are almost ready to begin cross compiling the kernel, but first we must install package dependencies. I'm honestly not sure all of these are necessary, but I built this list of dependencies from from Ubuntu's wiki (https://wiki.ubuntu.com/KernelTeam/ARMKernelCrossCompile) and based on my own experiences.
+```
+sudo apt-get install build-essential kexec-tools kernel-wedge gcc-arm-linux-gnueabihf
+sudo apt-get install gcc-arm-linux-gnueabihf libncurses5 libncurses5-dev libelf-dev || sudo apt-get install gcc-arm-linux-gnueabihf libncurses-dev libelf-dev 
+sudo apt-get install asciidoc binutils-dev 
+sudo apt-get install libgmp3-dev libmpc-dev
+```
+Before we can install the last dependencies we must enable the `deb-src` repositories. Note: I retried these cross compile instructions on Pop!OS 22.04 LTS and did not need to update the sources.list file. You may want to try installing the final dependencies before editing your source files.
+```
+sudo nano /etc/apt/sources.list
+```
+Uncomment all lines starting with `deb-src` (delete the #). For example, `# deb-src http://us.archive.ubuntu.com/ubuntu/ mantic main restricted` becomes `deb-src http://us.archive.ubuntu.com/ubuntu/ mantic main restricted`
+
+Save and exit the file by pressing `Control-o` then `Enter` and then `Control-x`.
+
+Install the final dependencies.
+```
+sudo apt update
+sudo apt-get build-dep linux
+```
+#### Configure Your Environment and Kernel ####
+Navigate to your Linux kernel folder inside the `steamlink-sdk` directory
+```
+cd ~/steamcc/steamlink-sdk/linux*
+```
+Download a kernel config file based on Valve's config file
+```
+wget https://raw.githubusercontent.com/craw0967/steamlink-archlinux/refs/heads/main/config
+```
+Rename the downloaded config file to `.config`.  This will replace the default `.config` file.
+```
+mv config .config
+```
+Set up your environment.
+```
+source ~/steamcc/steamlink-sdk/setenv.sh export ARCH=arm; export LOCALVERSION="-mrvl"; export CROSS_COMPILE=arm-linux-gnueabihf-
+```
+Update the config file to set the kernel's Local Version suffix using the config script provided by Valve
+```
+./scripts/config --file .config --set-str LOCALVERSION "-mrvl"
+```
+Prepare the make configuration to match the kernel being compiled and set any additional options you wish to include.
+```
+make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- menuconfig
+```
+Save and exit the menuconfig application.
+
+Build the kernel.
+
+Note: You can attempt to build the kernel without using sudo, but if it fails run `make clean` and then retry using sudo.
+```
+sudo make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- -k
+```
+Grab the resulting `zImage` file and store it in a known location.
+```
+mkdir ~/steamcc/arch_boot && cp ~/steamcc/steamlink-sdk/linux*/arch/arm/boot/zImage ~/steamcc/arch_boot/
+```
+Grab the `berlin2cd-valve-steamlink.dtb` file and store it in a known location.
+```
+cp ~/steamcc/steamlink-sdk/linux*/arch/arm/boot/dts/synaptics/berlin2cd-valve-steamlink.dtb ~/steamcc/arch_boot/
+```
+Make the kernel modules.
+```
+sudo make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- modules
+```
+Install kernel modules to a known location
+```
+make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- INSTALL_MOD_PATH=~/steamcc/arch_boot modules_install
+```
+Clean up the modules and keep just the necessary files.
+```
+cd ~/steamcc/arch_boot && mv ~/steamcc/arch_boot/lib/modules/*-mrvl ~/steamcc/arch_boot/ && rm -r ~/steamcc/arch_boot/lib && rm -r ~/steamcc/arch_boot/*-mrvl/build
+```
+**TODO** - Add instructions on generating initramfs image. The image included in the repository works, however instructions would be good for historical purposes or for anyone wanting to generate their own.
+#### Create a USB Drive Boot Drive Using the New Kernel ####
+Clone install script Git repository
+```
+cd ~/steamcc
+git clone https://github.com/craw0967/steamlink-archlinux.git
+```
+Navigate to repository directory
+```
+cd ~/steamcc/steamlink-archlinux
+```
+Clean up the old files in the repository.
+```
+rm berlin2cd-valve-steamlink.dtb && rm -r *-mrvl && rm zImage*
+```
+Copy new kernel files to the repository directory
+```
+cp -r ~/steamcc/arch_boot/* ~/steamcc/steamlink-archlinux/
+```
+Plug in a USB flash drive and follow instructions for the install script - https://github.com/craw0967/steamlink-archlinux#installation-steps
+
 ## References ##
 
 - https://github.com/ValveSoftware/steamlink-sdk
@@ -384,67 +559,4 @@ sudo netctl enable mlan0-SSIDName
 - https://www.kernel.org/
 - http://os.archlinuxarm.org/os/
 - https://wiki.ubuntu.com/KernelTeam/ARMKernelCrossCompile
-
-## Instructions to Compile Linux Kernel (Rough) ##
-
-sudo apt update sudo apt upgrade cd ~ mkdir ~/steamcc && cd ~/steamcc sudo apt install git git clone https://github.com/ValveSoftware/steamlink-sdk.git download kernel and signature from kernel.org mkdir ~/steamcc/kernel-dl && cd ~/steamcc/kernel-dl
-
-wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.8.tar.xz wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.6.8.tar.sign
-
-verify tarball's authenticity reference - https://itsfoss.com/compile-linux-kernel/
-
-decompress unxz --keep linux-*.tar.xz
-
-install gnupg2 if needed sudo apt install gnupg2
-
-fetch public GPG keys gpg2 --locate-keys torvalds@kernel.org gregkh@kernel.org
-
-verify integrity of tarball gpg2 --verify linux-*.tar.sign
-
-if you receive a message that says gpg: Good Signature, then proceed with extracting the tarball. Do not proceed if the tarball does not validate. Redownload the files and try again. tar -xf linux-*.tar
-
-clean up files rm linux-6.6.8.tar*
-
-move kernel to the steamlink-skd folder mv linux-6.6.8 ~/steamcc/steamlink-sdk/
-
-cd to the steamlink-sdk directory cd ~/steamcc/steamlink-sdk/
-
-clean up the kernel-dl folder rm -r ~/steamcc/kernel-dl
-
-We are now ready to begin cross compiling the kernel and necessary files Install dependencies - not sure this is all necessary, but taken from Ubuntu reference - https://wiki.ubuntu.com/KernelTeam/ARMKernelCrossCompile and from experience sudo apt-get install build-essential kexec-tools kernel-wedge gcc-arm-linux-gnueabihf sudo apt-get install gcc-arm-linux-gnueabihf libncurses5 libncurses5-dev libelf-dev || sudo apt-get install gcc-arm-linux-gnueabihf libncurses-dev libelf-dev sudo apt-get install asciidoc binutils-dev sudo apt-get install libgmp3-dev libmpc-dev
-
-Before the next step you must enable deb-src repositories sudo nano /etc/apt/sources.list Uncomment all lines starting with deb-src (delete the #) Example: # deb-src http://us.archive.ubuntu.com/ubuntu/ mantic main restricted becomes deb-src http://us.archive.ubuntu.com/ubuntu/ mantic main restricted
-
-save and exit control-x and press y then enter sudo apt update sudo apt-get build-dep linux
-
-navigate to your linux kernel folder inside the steamlink-sdk directory cd ~/steamcc/steamlink-sdk/linux*
-
-set up your environment source ~/steamcc/steamlink-sdk/setenv.sh export ARCH=arm; export LOCALVERSION="-mrvl"; export CROSS_COMPILE=arm-linux-gnueabihf- ./scripts/config --file .config --set-str LOCALVERSION "-mrvl"
-
-download kernel config file based on Valve's config file wget https://heap.ovh/files/steamlink/5.10.32/config
-
-rename config file to .config mv config .config
-
-prepare make configuration and configure the options desires make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- menuconfig
-
-build the kernel - can attempt to make without sudo, but if it fails run a make clean and then use sudo sudo make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- -k
-
-grab the zImage and store it in a known location mkdir ~/steamcc/arch_boot && cp ~/steamcc/steamlink-sdk/linux*/arch/arm/boot/zImage ~/steamcc/arch_boot/
-
-grab the .dtb file and store it in a known location cp ~/steamcc/steamlink-sdk/linux*/arch/arm/boot/dts/synaptics/berlin2cd-valve-steamlink.dtb ~/steamcc/arch_boot/
-
-make the kernel modules sudo make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- modules
-
-install kernel modules to a known location make ARCH=arm CROSS_COMPILE=/usr/bin/arm-linux-gnueabihf- INSTALL_MOD_PATH=~/steamcc/arch_boot modules_install
-
-clone install script git repository cd ~/steamcc git clone -b linux-6.1.66-mrvl https://github.com/craw0967/steamlink-archlinux.git
-
-navigate to repository directory cd ~/steamcc/SteamLink-ArchLinux
-
-copy new kernel files cp -r ~/steamcc/arch_boot/* ~/steamcc/SteamLink-ArchLinux/
-
-edit boot_disk_creator.sh to copy the new kernel folder (step 9/11) nano boot_disk_creator.sh edit these lines - echo [9/11] "Copying -mrvl to modules" sudo cp -r -mrvl/ /media/disk/lib/modules/ contol-x and press y then enter
-
-plug in a usb and follow instructions from the install script readme
-
-TODO - Add instructions on generating initramfs image. the image included in the script repo works, however instructions would be good for historical purposes or for users wanting to generate their own.
+- https://itsfoss.com/compile-linux-kernel/

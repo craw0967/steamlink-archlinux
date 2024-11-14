@@ -14,32 +14,33 @@ sudo mkfs.ext3 $devaddress
 echo [2/11] mounting $devaddress to /media/disk
 sudo mkdir -p /media/disk/
 sudo mount $devaddress /media/disk
-echo [3/11] "Downloading and unpacking userspace to /media/disk"
+echo [3/11] "Downloading and unpacking the latest ArchLinux ARMV7 userspace to /media/disk"
 curl -Lo arch_userspace.tar.gz http://os.archlinuxarm.org/os/ArchLinuxARM-armv7-latest.tar.gz
-sudo tar -xvpf  arch_userspace.tar.gz -C /media/disk/
+sudo tar -xvpf arch_userspace.tar.gz -C /media/disk/
 echo [4/11] "Copying kexec_load.ko"
 sudo cp kexec_load.ko /media/disk/boot/
 echo [5/11] "Copying zImage"
-sudo cp zImage_6_1_66 /media/disk/boot/zImage
+sudo cp zImage* /media/disk/boot/zImage
 echo [6/11] "Copying initramfs"
-sudo cp initramfs-linux-steam_6_1_66.img /media/disk/boot/initramfs-linux-steam.img
+sudo cp initramfs-linux-steam*.img /media/disk/boot/initramfs-linux-steam.img
 echo [7/11] "Copying berlin2cd-valve-steamlink.dtb"
 sudo cp berlin2cd-valve-steamlink.dtb /media/disk/boot/
-echo [8/11] "Copying  kexec and 755 on kexec"
+echo [8/11] "Copying kexec and 755 on kexec"
 sudo cp kexec /media/disk/usr/bin
 sudo chmod 755 /media/disk/usr/bin/kexec
-echo [9/11] "Copying 6.1.66-mrvl to modules"
-sudo cp -r 6.1.66-mrvl/ /media/disk/lib/modules/
+echo [9/11] "Copying kernel modules"
+sudo cp -r *-mrvl/ /media/disk/lib/modules/
 echo [10/11] "Copying run.sh and 755 on it"
 sudo mkdir -p /media/disk/steamlink/factory_test/
 sudo cp run.sh /media/disk/steamlink/factory_test/
 sudo chmod 755 /media/disk/steamlink/factory_test/run.sh
-echo [11/11] "Finally creating ssh folder"
+echo [11/11] "Finally, creating ssh folder and enabling SSH"
 sudo mkdir -p /media/disk/steamlink/config/system/
-sudo echo "True" > /media/disk/steamlink/config/system/enable_ssh.txt
+sudo echo "True" >/media/disk/steamlink/config/system/enable_ssh.txt
 echo "Completed, unmounting disk. This may take a while."
 sudo umount -l $devaddress
 echo "Cleaning up ... "
 sudo rm -rf /media/disk
-echo  "Completed. Please remove the USB disk and insert it into steamlink."
+echo "Completed. Please remove the USB disk and insert it into steamlink."
 
+mkinitcpio --generate /boot/initramfs-linux-steam.img --kernel 6.6.56-mrvl
