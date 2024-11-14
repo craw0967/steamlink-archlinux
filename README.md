@@ -1,4 +1,16 @@
 # SteamLink-ArchLinux #
+
+## THIS README IS OUT OF DATE! ##
+The information below is tailored for the original script in the 'boot_disk_creator.sh' file. While some of the details here are improved over the Main branch README, such as the kernel compiling instructions, these instructions only loosely align with the new script.
+
+Post install instructions are still valid.
+
+If you wish to try the new script, run the 'boot_disk_wizard.sh' script. THERE WILL BE BUGS.
+
+This is a work in progress.  There is absolutely no warranty, implied or otherwise, and I am not responsible for data loss or other damage.  I've tried my best to at least have the major functionality working before I committed this branch, but some things do not and will not work as expected without more updates.
+
+## Read Me ##
+
 This repository hosts a modified version of the script found in this GitHub repository - https://github.com/regmibijay/steamlink-archlinux
 
 From regmibijay's repository:
